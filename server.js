@@ -2,39 +2,31 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 const app = express();
-const port = process.env.PORT || 3000;
 
-app.use(bodyParser.urlencoded({ extended: true }));
+// Parse incoming request bodies
 app.use(bodyParser.json());
 
-// Endpoint to handle incoming messages from the extension
+// Store messages in memory (replace this with a database in production)
+let messages = [];
+
+// Endpoint to handle incoming messages
 app.post('/messages', (req, res) => {
     const message = req.body.message;
     // Log the received message
-    console.log('Message received from extension:', message);
-    // Process the message (you can implement your logic here)
-    // For now, let's just send a simple response
-    const response = `Server received message: ${message}`;
-    // Send back a response to the extension
-    res.json({ response });
+    console.log('Message received:', message);
+    // Add the message to the list
+    messages.push(message);
+    // Send back a response
+    res.status(201).json({ message: 'Message received and stored' });
 });
 
-// Endpoint to handle incoming messages from the web UI
-app.post('/send-message', (req, res) => {
-    const message = req.body.message;
-    // Log the received message
-    console.log('Message received from web UI:', message);
-    // Send the message to the extension (you need to implement this part)
-    // For now, let's just send a simple response
-    const response = `Server received message from web UI: ${message}`;
-    // Send back a response to the web UI
-    res.json({ response });
+// Endpoint to get all messages
+app.get('/messages', (req, res) => {
+    // Send back the list of messages
+    res.json({ messages });
 });
-
-// Serve static files (e.g., HTML, CSS, JS)
-app.use(express.static('public'));
 
 // Start the server
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+app.listen(() => {
+    console.log('Server is running');
 });
