@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Message Sender</title>
+    <style>
+        /* Add your CSS styles here */
+    </style>
+</head>
+<body>
+    <h1>Message Sender</h1>
+    <div>
+        <h2>Received Messages</h2>
+        <div id="received-messages"></div>
+    </div>
+    <div>
+        <h2>Send a Message</h2>
+        <input type="text" id="message-input" placeholder="Type your message...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <script>
+        function sendMessage() {
+            const message = document.getElementById('message-input').value;
+            // Send message to the server
+            fetch('/messages', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Server response:', data);
+                // Display server response
+                const receivedMessagesDiv = document.getElementById('received-messages');
+                const messageDiv = document.createElement('div');
+                messageDiv.textContent = data.response;
+                receivedMessagesDiv.appendChild(messageDiv);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+            // Clear input field
+            document.getElementById('message-input').value = '';
+        }
+    </script>
+</body>
+</html>
